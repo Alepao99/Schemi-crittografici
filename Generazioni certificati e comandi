@@ -1,0 +1,76 @@
+COMANDI PER LA GENERAZIONE DEI CERTIFICATI
+
+Dealer:
+keytool -genkey -noprompt -trustcacerts -keyalg ec -groupname secp256r1 -sigAlg SHA256withECDSA -alias sslAuth -dname "cn=localhost, ou=DIEM, o=unisa, c=IT" -keypass serverAuthpwd -keystore keystoreServerAuth.jks
+
+keytool -export -alias sslAuth -storepass serverAuthpwd -file sslServerAuth.cer -keystore keystoreServerAuth.jks
+
+keytool -import -v -trustcacerts -alias sslAuth -keystore truststoServerAuth.jks -file sslServerAuth.cer -keypass serverAuthpwd
+
+******************
+keytool -genkey -noprompt -trustcacerts -keyalg ec -groupname secp256r1 -sigAlg SHA256withECDSA -alias sslVoting -dname "cn=localhost, ou=DIEM, o=unisa, c=IT" -keypass serverVoting -keystore keystoreServerVoting.jks
+
+keytool -export -alias sslVoting -storepass serverVoting -file sslServerVoting.cer -keystore keystoreServerVoting.jks
+
+keytool -import -v -trustcacerts -alias sslVoting -keystore truststoServerVoting.jks -file sslServerVoting.cer -keypass serverVoting
+
+******************
+keytool -genkey -noprompt -trustcacerts -keyalg ec -groupname secp256r1 -sigAlg SHA256withECDSA -alias sslDealer -dname "cn=localhost, ou=DIEM, o=unisa, c=IT" -keypass serverDealer -keystore keystoreServerDealer.jks
+
+keytool -export -alias sslDealer -storepass serverDealer -file sslServerDealer.cer -keystore keystoreServerDealer.jks
+
+keytool -import -v -trustcacerts -alias sslDealer -keystore truststoServerDealer.jks -file sslServerDealer.cer -keypass serverDealer
+
+******************
+keytool -genkey -noprompt -trustcacerts -keyalg ec -groupname secp256r1 -sigAlg SHA256withECDSA -alias sslRec -dname "cn=localhost, ou=DIEM, o=unisa, c=IT" -keypass serverRec -keystore keystoreServerRec.jks
+
+keytool -export -alias sslRec -storepass serverRec -file sslServerRec.cer -keystore keystoreServerRec.jks
+
+keytool -import -v -trustcacerts -alias sslRec -keystore truststoServerRec.jks -file sslServerRec.cer -keypass serverRec
+
+
+Comandi per l'esecuzione del progetto eseguiti in sequenza
+Attenzione eseguire sempre PreliminarySetting prima di ogni simulazione
+
+Step One
+
+java -Djavax.net.ssl.keyStore=keystoreServerDealer.jks -Djavax.net.ssl.keyStorePassword=serverDealer it.unisa.securityteam.project.DealerSKAU
+java -Djavax.net.ssl.trustStore=truststoServerDealer.jks -Djavax.net.ssl.trustStorePassword=serverDealer it.unisa.securityteam.project.ServerAuthenticationDealer localhost 4000
+java -Djavax.net.ssl.trustStore=truststoServerDealer.jks -Djavax.net.ssl.trustStorePassword=serverDealer it.unisa.securityteam.project.ServerVotingDealer localhost 4000
+
+Step Two
+java -Djavax.net.ssl.keyStore=keystoreServerAuth.jks -Djavax.net.ssl.keyStorePassword=serverAuthpwd it.unisa.securityteam.project.SocketListenerAuthentication 100000
+java -Djavax.net.ssl.trustStore=truststoServerAuth.jks -Djavax.net.ssl.trustStorePassword=serverAuthpwd it.unisa.securityteam.project.SocketClientAuthentication localhost 4000
+
+Step Three
+java -Djavax.net.ssl.keyStore=keystoreServerVoting.jks -Djavax.net.ssl.keyStorePassword=serverVoting it.unisa.securityteam.project.SocketListenerVoting 100000
+java -Djavax.net.ssl.trustStore=truststoServerVoting.jks -Djavax.net.ssl.trustStorePassword=serverVoting it.unisa.securityteam.project.SocketClientVoting localhost 4001
+
+Step Four
+java -Djavax.net.ssl.keyStore=keystoreServerRec.jks -Djavax.net.ssl.keyStorePassword=serverRec it.unisa.securityteam.project.ServerRecostructionResult
+java -Djavax.net.ssl.trustStore=truststoServerRec.jks -Djavax.net.ssl.trustStorePassword=serverRec it.unisa.securityteam.project.ServerAuthenticationRecostruction localhost 4000
+java -Djavax.net.ssl.trustStore=truststoServerRec.jks -Djavax.net.ssl.trustStorePassword=serverRec it.unisa.securityteam.project.ServerVotingRecostruction localhost 4000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

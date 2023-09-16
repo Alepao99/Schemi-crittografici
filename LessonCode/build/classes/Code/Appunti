@@ -1,0 +1,54 @@
+
+SecretKeySpec:
+Costruisce una chiave segreta dall'array di byte specificato.
+Questo costruttore non verifica se i byte forniti specificano effettivamente una chiave segreta 
+dell'algoritmo specificato. Ad esempio, se l'algoritmo è DES, questo costruttore non verifica se 
+key è lungo 8 byte e inoltre non verifica chiavi deboli o semideboli. 
+Affinché tali controlli possano essere eseguiti, è necessario utilizzare una classe di 
+specifica della chiave specifica dell'algoritmo (in questo caso: DESKeySpec).
+
+
+La classe Cipher fornisce la funzionalità di un codice crittografico per la crittografia e la decrittografia.
+Per creare un oggetto Cipher, l'applicazione chiama il getInstance e gli passa il nome della trasformazione
+richiesta. include sempre il nome di un algoritmo crittografico:
+Una trasformazione ha la forma:
+
+" algoritmo/modalità/padding " o
+" algoritmo "
+
+Every implementation of the Java platform is required to support the following standard Cipher transformations with the keysizes in parentheses:
+AES/CBC/NoPadding (128)
+AES/CBC/PKCS5Padding (128)
+AES/ECB/NoPadding (128)
+AES/ECB/PKCS5Padding (128)
+DES/CBC/NoPadding (56)
+DES/CBC/PKCS5Padding (56)
+DES/ECB/NoPadding (56)
+DES/ECB/PKCS5Padding (56)
+DESede/CBC/NoPadding (168)
+DESede/CBC/PKCS5Padding (168)
+DESede/ECB/NoPadding (168)
+DESede/ECB/PKCS5Padding (168)
+RSA/ECB/PKCS1Padding (1024, 2048)
+RSA/ECB/OAEPWithSHA-1AndMGF1Padding (1024, 2048)
+RSA/ECB/OAEPWithSHA-256AndMGF1Padding (1024, 2048)
+
+dopodicchè si passa all'inizializzazione della cifratura con una delle modalità
+ ENCRYPT_MODE, DECRYPT_MODE, WRAP_MODE or UNWRAP_MODE
+passando la chiave
+
+cipher.getOutputSize(input.length)
+Restituisce la lunghezza in byte che dovrebbe essere un buffer di output per contenere il risultato 
+dell'operazione successiva update, doFinaldata la lunghezza dell'input inputLen(in byte).
+
+
+int ctLength = cipher.update(input, 0, input.length, cipherText, 0);
+The first inputLen bytes in the input buffer, starting at inputOffset inclusive, are processed, 
+and the result is stored in the output buffer, starting at outputOffset inclusive.
+If the output buffer is too small to hold the result, a ShortBufferException is thrown. In this case,
+repeat this call with a larger output buffer. Use getOutputSize to determine how big the output buffer should be.
+
+If inputLen is zero, this method returns a length of zero.
+ctLength += cipher.doFinal(cipherText, ctLength);
+
+
